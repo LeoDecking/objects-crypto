@@ -7,7 +7,6 @@ import * as base64 from "@stablelib/base64";
 import bigi from "bigi";
 
 
-// TODO disallow private export
 export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey<ObjectsKeyType>> extends Key<K>  {
 
     abstract publicKeyUsages: string[];
@@ -27,7 +26,7 @@ export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey
         let privateJWK = { ...jwk, d: base64.encodeURLSafe(privateKey).substr(0, 43) };
         let dummy = new this();
         return new this(await Promise.all([
-            crypto.subtle.importKey("jwk", privateJWK, { name: dummy.alorithm, namedCurve: "P-256" }, true, dummy.keyUsages),
+            crypto.subtle.importKey("jwk", privateJWK, { name: dummy.alorithm, namedCurve: "P-256" }, false, dummy.keyUsages),
             crypto.subtle.importKey("jwk", jwk, { name: dummy.alorithm, namedCurve: "P-256" }, true, dummy.publicKeyUsages)
         ]).then(keys => ({ privateKey: keys[0], publicKey: keys[1] })));
     }
@@ -38,10 +37,11 @@ export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey
         return await PrivateKey.import.call(this, result.hash);
     }
 
-    async export(): Promise<string> {
-        let jwk = await crypto.subtle.exportKey("jwk", this.key!);
-        return jwk.x!;
-    }
+    // exportable must be set to true
+    // async export(): Promise<string> {
+    //     let jwk = await crypto.subtle.exportKey("jwk", this.key!);
+    //     return jwk.x!;
+    // }
 }
 
 export class SignKey extends PrivateKey<ObjectsKeyType.Sign, VerifyKey> {
