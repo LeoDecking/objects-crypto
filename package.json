@@ -1,0 +1,26 @@
+{
+  "name": "objects-crypto",
+  "version": "1.0.0",
+  "description": "Wrapper for subtle crypto",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeoDecking/objects-crypto.git"
+  },
+  "author": "Leo Decking",
+  "bugs": {
+    "url": "https://github.com/LeoDecking/objects-crypto/issues"
+  },
+  "homepage": "https://github.com/LeoDecking/objects-crypto#readme",
+  "devDependencies": {
+    "@types/ecurve": "^1.0.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@stablelib/base64": "^1.0.0",
+    "@stablelib/utf8": "^1.0.0",
+    "bigi": "^1.4.2",
+    "ecurve": "^1.0.6"
+  }
+}
