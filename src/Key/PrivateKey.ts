@@ -7,7 +7,7 @@ import * as base64 from "@stablelib/base64";
 import bigi from "bigi";
 
 
-export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey<ObjectsKeyType>> extends Key<K>  {
+export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {
 
     abstract publicKeyUsages: string[];
 
@@ -15,7 +15,7 @@ export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey
         super(keyPair?.privateKey);
     }
 
-    static async import<K extends PrivateKey<ObjectsKeyType, PublicKey<ObjectsKeyType>>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array): Promise<K> {
+    static async import<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array): Promise<K> {
         let jwk: JsonWebKey = {};
         jwk.crv = "P-256";
         jwk.ext = true;
@@ -31,10 +31,10 @@ export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey
         ]).then(keys => ({ privateKey: keys[0], publicKey: keys[1] })));
     }
 
-    static async generate<K extends PrivateKey<ObjectsKeyType, PublicKey<ObjectsKeyType>>>(this: new (keyPair?: CryptoKeyPair) => K, password: string, salt: string): Promise<K> {
+    static async generate<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, password: string, salt: string): Promise<K> {
         let dummy = new this();
-        let result = await (window as any).argon2.hash({ pass: utf8.encode(password), salt: utf8.encode(salt + dummy.keyType), hashLen: 32, mem: 131072, time: 1, parallelism: 1, type: (window as any).argon2.ArgonType.Argon2id });
-        return await PrivateKey.import.call(this, result.hash);
+        let result = await Key.generateBits(password, salt ?? "", dummy.keyType!);
+        return await PrivateKey.import.call(this, result);
     }
 
     // exportable must be set to true
@@ -44,7 +44,7 @@ export abstract class PrivateKey<K extends ObjectsKeyType, Pub extends PublicKey
     // }
 }
 
-export class SignKey extends PrivateKey<ObjectsKeyType.Sign, VerifyKey> {
+export class SignKey extends PrivateKey<ObjectsKeyType.Sign> {
     readonly keyType = ObjectsKeyType.Sign;
     readonly alorithm = "ECDSA";
     readonly keyUsages = ["sign"];
@@ -58,7 +58,7 @@ export class SignKey extends PrivateKey<ObjectsKeyType.Sign, VerifyKey> {
     }
 }
 
-export class PrivateEncryptionKey extends PrivateKey<ObjectsKeyType.PrivateEncryption, PublicEncryptionKey> {
+export class PrivateEncryptionKey extends PrivateKey<ObjectsKeyType.PrivateEncryption> {
     readonly keyType = ObjectsKeyType.PrivateEncryption;
     readonly alorithm = "ECDH";
     readonly keyUsages = ["deriveKey"];

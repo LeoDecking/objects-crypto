@@ -1,31 +1,26 @@
-import {  ObjectsKeyType } from "./Keys";
-import * as utf8 from "@stablelib/utf8";
+import { ObjectsKeyType } from "./Keys";
 import * as base64 from "@stablelib/base64";
+import { Key } from "./Key";
 
 // SecretKeys können exportiert werden, deswegen wird jedes Mal ein neuer generiert
-export class SecretKey {
+// Passwort-basierte SecretKeys natürlich nicht
+export class SecretKey extends Key<ObjectsKeyType.Secret> {
     readonly keyType = ObjectsKeyType.Secret;
     readonly alorithm = "AES-GCM";
     readonly keyUsages = ["encrypt", "decrypt"];
 
 
-    readonly key?: CryptoKey;
-
-    constructor(key?: CryptoKey) {
-        this.key=key;
-    }
-
-    static async import(secretKey: Uint8Array): Promise<SecretKey> {
-        let dummy = new this();
-        return new this(await crypto.subtle.importKey("raw", secretKey, dummy.alorithm, true, dummy.keyUsages));
+    static async import(secretKey: Uint8Array, exportable = false): Promise<SecretKey> {
+        let dummy = new SecretKey();
+        return new SecretKey(await crypto.subtle.importKey("raw", secretKey, dummy.alorithm, exportable, dummy.keyUsages));
     }
 
     static async generate(password?: string, salt?: string): Promise<SecretKey> {
         let dummy = new this();
         let result = password
-            ? await (window as any).argon2.hash({ pass: utf8.encode(password), salt: utf8.encode((salt ?? "") + dummy.keyType), hashLen: 32, mem: 131072, time: 1, parallelism: 1, type: (window as any).argon2.ArgonType.Argon2id })
+            ? await Key.generateBits(password, salt ?? "", dummy.keyType)
             : crypto.getRandomValues(new Uint8Array(32));
-        return await SecretKey.import.call(this, result.hash);
+        return await SecretKey.import(result, !password);
     }
 
     async export(): Promise<string> {
