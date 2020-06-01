@@ -3,14 +3,14 @@ import { Key } from "./Key";
 
 export abstract class PublicKey<K extends ObjectsKeyType> extends Key<K>{
 
-    export: PromiseLike<string>;
+    readonly export: PromiseLike<string>;
 
     constructor(key?: CryptoKey, string?: string) {
         super(key);
 
         if (!key) this.export = Promise.resolve("");
         else if (string) this.export = Promise.resolve(string);
-        else this.export = crypto.subtle.exportKey("jwk", this.key!).then(jwk => jwk.x! + jwk.y!);
+        else this.export = crypto.subtle.exportKey("jwk", key).then(jwk => jwk.x! + jwk.y!);
     }
 
     static async import<K extends PublicKey<ObjectsKeyType>>(this: new (key?: CryptoKey, string?: string) => K, publicKey: string): Promise<K> {

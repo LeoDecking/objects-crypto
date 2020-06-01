@@ -1,7 +1,7 @@
 export { PrivateKey, PrivateEncryptionKey, SignKey } from "./PrivateKey";
 export { PublicKey, PublicEncryptionKey, VerifyKey } from "./PublicKey";
 export { SecretKey } from "./SecretKey";
-export { WrapKey } from "./WrapKey";
+// export { WrapKey } from "./WrapKey";
 
 export enum ObjectsKeyType {
     Secret = "secretKey",
@@ -12,6 +12,6 @@ export enum ObjectsKeyType {
     PrivateEncryption = "privateEncryptionKey",
     PublicEncryption = "publicEncryptionKey",
 
-    Wrap = "wrapKey"
+    // Wrap = "wrapKey"
 
 };

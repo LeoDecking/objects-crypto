@@ -1,6 +1,6 @@
 import * as utf8 from "@stablelib/utf8";
 import * as base64 from "@stablelib/base64";
-import { SignKey, VerifyKey, PrivateEncryptionKey, PublicEncryptionKey, SecretKey, WrapKey } from "./Key/Keys";
+import { SignKey, VerifyKey, PrivateEncryptionKey, PublicEncryptionKey, SecretKey } from "./Key/Keys";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto
 
@@ -30,20 +30,20 @@ export class ObjectsCrypto {
             .then(decrypted => ObjectsCrypto.sortObject(JSON.parse(utf8.decode(new Uint8Array(decrypted)))), () => Promise.reject("decryption error"));
     }
 
-    static async wrapKey(key: SecretKey, privateEncryptionKey: PrivateEncryptionKey, publicEncryptionKey: string): Promise<string> {
-        let derivedKey = await WrapKey.derive(privateEncryptionKey, await PublicEncryptionKey.import(publicEncryptionKey));
-        let encrypted = await crypto.subtle.wrapKey("raw", key.key!, derivedKey.key!, "AES-KW");
-        return base64.encode(new Uint8Array(encrypted));
-    }
-    static async unwrapKey(encrypted: string, privateEncryptionKey: PrivateEncryptionKey, publicEncryptionKey: string): Promise<SecretKey> {
-        try {
-            let derivedKey = await WrapKey.derive(privateEncryptionKey, await PublicEncryptionKey.import(publicEncryptionKey));
-            let decrypted = await crypto.subtle.unwrapKey("raw", base64.decode(encrypted), derivedKey.key!, "AES-KW", { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
-            return new SecretKey(decrypted);
-        } catch {
-            return Promise.reject("unwrapping error");
-        }
-    }
+    // static async wrapKey(key: SecretKey, privateEncryptionKey: PrivateEncryptionKey, publicEncryptionKey: string): Promise<string> {
+    //     let derivedKey = await WrapKey.derive(privateEncryptionKey, await PublicEncryptionKey.import(publicEncryptionKey));
+    //     let encrypted = await crypto.subtle.wrapKey("raw", key.key!, derivedKey.key!, "AES-KW");
+    //     return base64.encode(new Uint8Array(encrypted));
+    // }
+    // static async unwrapKey(encrypted: string, privateEncryptionKey: PrivateEncryptionKey, publicEncryptionKey: string): Promise<SecretKey> {
+    //     try {
+    //         let derivedKey = await WrapKey.derive(privateEncryptionKey, await PublicEncryptionKey.import(publicEncryptionKey));
+    //         let decrypted = await crypto.subtle.unwrapKey("raw", base64.decode(encrypted), derivedKey.key!, "AES-KW", { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
+    //         return new SecretKey(decrypted);
+    //     } catch {
+    //         return Promise.reject("unwrapping error");
+    //     }
+    // }
 
     static hash(object: any): PromiseLike<string> {
         return crypto.subtle.digest("SHA-512", utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object)))).then(digest => base64.encode(new Uint8Array(digest)));
