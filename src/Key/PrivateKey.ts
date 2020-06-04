@@ -15,6 +15,7 @@ export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {
         super(keyPair?.privateKey);
     }
 
+    // TODO publicKey is empty
     static async import<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array): Promise<K> {
         let jwk: JsonWebKey = {};
         jwk.crv = "P-256";
