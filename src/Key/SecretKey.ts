@@ -17,8 +17,10 @@ export class SecretKey extends Key<ObjectsKeyType.Secret> {
         if (key && exportable) this.export = string ? Promise.resolve(string) : crypto.subtle.exportKey("raw", key).then(raw => base64.encode(new Uint8Array(raw)));
     }
 
-    static async import(secretKey: Uint8Array | string, exportable = false): Promise<SecretKey> {
+    static async import(secretKey: Uint8Array | number[] | string, exportable = false): Promise<SecretKey> {
         let dummy = new SecretKey();
+
+        if (Array.isArray(secretKey)) secretKey = new Uint8Array(secretKey);
 
         let bytes = (typeof secretKey) == "string" ? base64.decode(secretKey as string) : secretKey as Uint8Array;
         let string = (typeof secretKey) == "string" ? secretKey as string : base64.encode(secretKey as Uint8Array);

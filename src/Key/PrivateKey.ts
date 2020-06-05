@@ -1,7 +1,6 @@
 import { getCurveByName } from "ecurve";
-import { ObjectsKeyType, PublicKey, VerifyKey, PublicEncryptionKey } from "./Keys";
+import { ObjectsKeyType, VerifyKey, PublicEncryptionKey } from "./Keys";
 import { Key } from "./Key";
-import * as utf8 from "@stablelib/utf8";
 import * as base64 from "@stablelib/base64";
 
 import bigi from "bigi";
@@ -16,7 +15,9 @@ export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {
     }
 
     // TODO publicKey is empty
-    static async import<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array): Promise<K> {
+    static async import<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array | number[]): Promise<K> {
+        if (Array.isArray(privateKey)) privateKey = new Uint8Array(privateKey);
+
         let jwk: JsonWebKey = {};
         jwk.crv = "P-256";
         jwk.ext = true;
