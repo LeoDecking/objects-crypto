@@ -7,12 +7,12 @@ import { SignKey, VerifyKey, PrivateEncryptionKey, PublicEncryptionKey, SecretKe
 export class ObjectsCrypto {
     static sign(object: any, signKey: SignKey): PromiseLike<string> {
         // console.log("sign", ObjectsCrypto.sortObject(object), signKey, base64.encode(nacl.sign.detached(utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object))), signKey.uint8Array)))
-        return crypto.subtle.sign({ name: "ECDSA", hash: { name: "SHA-512" } }, signKey.key!, utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object))))
+        return crypto.subtle.sign({ name: "ECDSA", hash: { name: "SHA-256" } }, signKey.key!, utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object))))
             .then(signature => base64.encode(new Uint8Array(signature)));
     }
     static verify(object: any, signature: string, verifyKey: VerifyKey): PromiseLike<boolean> {
         try {
-            return crypto.subtle.verify({ name: "ECDSA", hash: { name: "SHA-512" } }, verifyKey.key!, base64.decode(signature), utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object)))).then(null, () => false);
+            return crypto.subtle.verify({ name: "ECDSA", hash: { name: "SHA-256" } }, verifyKey.key!, base64.decode(signature), utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object)))).then(null, () => false);
         } catch {
             return Promise.resolve(false);
         }
@@ -21,11 +21,12 @@ export class ObjectsCrypto {
 
     static encrypt(object: any, secretKey: SecretKey): PromiseLike<string> {
         let iv: Uint8Array = ObjectsCrypto.getRandomBytes(12);
-
+        // secretKey.export?.then(e=>console.log("encrypt with "+e));
         return crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, secretKey.key!, utf8.encode(JSON.stringify(ObjectsCrypto.sortObject(object))))
             .then(encrypted => base64.encode(iv) + base64.encode(new Uint8Array(encrypted)));
     }
     static decrypt(encryptedObject: string, secretKey: SecretKey): PromiseLike<any> {
+        // secretKey.export?.then(e=>console.log("decrypt with "+e));
         return crypto.subtle.decrypt({ name: "AES-GCM", iv: base64.decode(encryptedObject.substr(0, 16)) }, secretKey.key!, base64.decode(encryptedObject.substr(16)))
             .then(decrypted => ObjectsCrypto.sortObject(JSON.parse(utf8.decode(new Uint8Array(decrypted)))), () => Promise.reject("decryption error"));
     }
@@ -54,6 +55,7 @@ export class ObjectsCrypto {
     }
 
 
+    // copy in cloud functions
     static sortObject(object: any, parseDate: boolean = false): any {
         if (object == null || object == undefined) return null;
         if (object instanceof Date) return object;

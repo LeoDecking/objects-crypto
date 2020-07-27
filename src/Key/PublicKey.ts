@@ -21,7 +21,7 @@ export abstract class PublicKey<K extends ObjectsKeyType> extends Key<K>{
         jwk.x = publicKey.substr(0, 43);
         jwk.y = publicKey.substr(43);
         let dummy = new this();
-        return new this(await crypto.subtle.importKey("jwk", jwk, { name: dummy.alorithm, namedCurve: "P-256" }, true, dummy.keyUsages), jwk.x! + jwk.y!);
+        return new this(await crypto.subtle.importKey("jwk", jwk, { name: dummy.alorithm, namedCurve: "P-256" }, true, dummy.keyUsages as KeyUsage[]), jwk.x! + jwk.y!);
     }
 }
 

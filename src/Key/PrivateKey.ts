@@ -28,8 +28,8 @@ export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {
         let privateJWK = { ...jwk, d: base64.encodeURLSafe(privateKey).substr(0, 43) };
         let dummy = new this();
         return new this(await Promise.all([
-            crypto.subtle.importKey("jwk", privateJWK, { name: dummy.alorithm, namedCurve: "P-256" }, false, dummy.keyUsages),
-            crypto.subtle.importKey("jwk", jwk, { name: dummy.alorithm, namedCurve: "P-256" }, true, dummy.publicKeyUsages)
+            crypto.subtle.importKey("jwk", privateJWK, { name: dummy.alorithm, namedCurve: "P-256" }, false, dummy.keyUsages as KeyUsage[]),
+            crypto.subtle.importKey("jwk", jwk, { name: dummy.alorithm, namedCurve: "P-256" }, true, dummy.publicKeyUsages as KeyUsage[])
         ]).then(keys => ({ privateKey: keys[0], publicKey: keys[1] })));
     }
 
