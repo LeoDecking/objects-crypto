@@ -58,7 +58,7 @@ export class ObjectsCrypto {
     // copy in cloud functions
     static sortObject(object: any, parseDate: boolean = false): any {
         if (object == null || object == undefined) return null;
-        if (object instanceof Date) return object;
+        if (object instanceof Date) return new Date(object); // Date not tested
 
         if (Array.isArray(object)) {
             let newObject = [];
