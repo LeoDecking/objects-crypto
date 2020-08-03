@@ -54,6 +54,9 @@ export class ObjectsCrypto {
         return crypto.getRandomValues(new Uint8Array(length));
     }
 
+    static equals(a: any, b: any): boolean {
+        return JSON.stringify(this.sortObject(a)) == JSON.stringify(this.sortObject(b));
+    }
 
     // copy in cloud functions
     static sortObject(object: any, parseDate: boolean = false): any {
