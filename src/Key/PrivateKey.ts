@@ -35,7 +35,7 @@ export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {
 
     static async generate<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, password?: string, salt?: string): Promise<K> {
         let dummy = new this();
-        let result = password
+        let result = password != null
             ? await Key.generateBits(password, (salt ?? "") + dummy.keyType)
             : crypto.getRandomValues(new Uint8Array(32));
         return await PrivateKey.import.call(this, result);
