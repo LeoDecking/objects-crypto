@@ -2,8 +2,8 @@ import { getCurveByName } from "ecurve";
 import { ObjectsKeyType, VerifyKey, PublicEncryptionKey } from "./Keys";
 import { Key } from "./Key";
 import * as base64 from "@stablelib/base64";
-
 import bigi from "bigi";
+import crypto from "../crypto";
 
 
 export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {

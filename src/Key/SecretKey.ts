@@ -1,6 +1,8 @@
 import { ObjectsKeyType, PrivateEncryptionKey, PublicEncryptionKey } from "./Keys";
 import * as base64 from "@stablelib/base64";
 import { Key } from "./Key";
+import crypto from "../crypto";
+
 
 // SecretKeys können exportiert werden, deswegen wird jedes Mal ein neuer generiert
 // Passwort-basierte SecretKeys natürlich nicht

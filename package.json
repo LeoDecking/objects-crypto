@@ -14,12 +14,15 @@
   },
   "homepage": "https://github.com/LeoDecking/objects-crypto#readme",
   "devDependencies": {
+    "@types/argon2-browser": "^1.12.0",
     "@types/ecurve": "^1.0.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@peculiar/webcrypto": "^1.1.3",
     "@stablelib/base64": "^1.0.0",
     "@stablelib/utf8": "^1.0.0",
+    "argon2-browser": "^1.14.0",
     "bigi": "^1.4.2",
     "ecurve": "^1.0.6"
   }

@@ -1,5 +1,7 @@
 import { ObjectsKeyType } from "./Keys";
 import { Key } from "./Key";
+import crypto from "../crypto";
+
 
 export abstract class PublicKey<K extends ObjectsKeyType> extends Key<K>{
 
