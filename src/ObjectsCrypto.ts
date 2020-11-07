@@ -27,6 +27,7 @@ export class ObjectsCrypto {
             .then(encrypted => base64.encode(iv) + base64.encode(new Uint8Array(encrypted)));
     }
     static decrypt(encryptedObject: string, secretKey: SecretKey): PromiseLike<any> {
+        if (!encryptedObject) return Promise.resolve(undefined);
         // secretKey.export?.then(e=>console.log("decrypt with "+e));
         return crypto.subtle.decrypt({ name: "AES-GCM", iv: base64.decode(encryptedObject.substr(0, 16)) }, secretKey.key!, base64.decode(encryptedObject.substr(16)))
             .then(decrypted => ObjectsCrypto.sortObject(JSON.parse(utf8.decode(new Uint8Array(decrypted)))), () => Promise.reject("decryption error"));

@@ -10,12 +10,14 @@ export abstract class PrivateKey<K extends ObjectsKeyType> extends Key<K>  {
 
     abstract publicKeyUsages: string[];
 
+    static readonly defaultPublicString = "m-zioI4s0Ey7m6UQKlGHD1Sx5FDC_UF9qD7-FnB6GQYzaFLXu3a3ljO91J_8Mm5jn_m_dsWSWEChxz2LOppTsQ";
+
     constructor(keyPair?: CryptoKeyPair) {
         super(keyPair?.privateKey);
     }
 
     // TODO publicKey is empty
-    static async import<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array | number[]): Promise<K> {
+    static async import<K extends PrivateKey<ObjectsKeyType>>(this: new (keyPair?: CryptoKeyPair) => K, privateKey: Uint8Array | number[] = new Array(32).fill(23)): Promise<K> {
         if (Array.isArray(privateKey)) privateKey = new Uint8Array(privateKey);
 
         let jwk: JsonWebKey = {};
