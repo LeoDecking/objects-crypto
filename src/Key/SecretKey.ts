@@ -9,7 +9,7 @@ import crypto from "../crypto";
 export class SecretKey extends Key<ObjectsKeyType.Secret> {
     readonly keyType = ObjectsKeyType.Secret;
     readonly alorithm = "AES-GCM";
-    readonly keyUsages = ["encrypt", "decrypt"];
+    readonly keyUsages: KeyUsage[] = ["encrypt", "decrypt"];
 
     readonly export?: PromiseLike<string>;
 
