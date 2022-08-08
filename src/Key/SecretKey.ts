@@ -30,10 +30,10 @@ export class SecretKey extends Key<ObjectsKeyType.Secret> {
         return new SecretKey(await crypto.subtle.importKey("raw", bytes, dummy.alorithm, false, dummy.keyUsages), exportable, string);
     }
 
-    static async generate(password?: string, salt?: string): Promise<SecretKey> {
+    static async generate(password?: string, salt?: string, m: number=128): Promise<SecretKey> {
         let dummy = new this();
         let result = password != null
-            ? await Key.generateBits(password, (salt ?? "") + dummy.keyType)
+            ? await Key.generateBits(password, (salt ?? "") + dummy.keyType, m)
             : crypto.getRandomValues(new Uint8Array(32));
         return await SecretKey.import(result, !password);
     }
